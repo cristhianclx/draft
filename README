@@ -2,10 +2,62 @@ To code:
 
     docker-compose run --service-ports func-bash
 
-To access:
+To access backend:
 
-    ping: http --verify=no GET http://127.0.0.1:7071/api/ping
+    ping: http --verify=no GET http://127.0.0.1:7071/ping/
 
     {
       "message": "pong"
     }
+    
+    generate: http --verify=no POST http://127.0.0.1:7071/server/generate/ q="homepage for dog app"
+    
+    {
+      "id": "<id>",
+      "script": "<JS_CODE>",
+      "url": "<url>",
+    }
+    
+    generate: http --verify=no GET http://127.0.0.1:7071/server/data/<id>/
+    
+    {
+      "id": "<id>",
+      "script": "<JS_CODE>",
+      "url": "<url>",
+    }
+    
+To access frontend:
+
+    cd www
+    npm install
+    npm start
+    
+Login to the Azure CLI using:
+
+    az login
+
+    export AZURE_SUBSCRIPTION_ID=""
+    export AZURE_TENANT_ID=""
+    export AZURE_CLIENT_ID=""
+    export AZURE_CLIENT_SECRET=""
+
+To install from here https://github.com/Azure/azure-functions-core-tools.
+
+To use TiDB:
+
+    export TIDBCLOUD_PUBLIC_KEY=""
+    export TIDBCLOUD_PRIVATE_KEY=""
+
+To create resources, change infrastructure/.auto.tfvars
+
+    STAGE=main
+    cd ./infrastructure/
+    terraform fmt -recursive
+    terraform init -backend=true -get=true -reconfigure -upgrade
+    terraform workspace select -or-create $STAGE
+    terraform apply -refresh=true
+
+To deploy:
+
+    az functionapp cors add --name function-something --resource-group <rg> --allowed-origins "*"
+    func azure functionapp publish function-something
