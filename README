@@ -1,0 +1,11 @@
+To code:
+
+    docker-compose run --service-ports func-bash
+
+To access:
+
+    ping: http --verify=no GET http://127.0.0.1:7071/api/ping
+
+    {
+      "message": "pong"
+    }
