@@ -1,0 +1,67 @@
+version: '3.8'
+services:
+  azurite:
+    container_name: azurite
+    image: mcr.microsoft.com/azure-storage/azurite
+    healthcheck:
+      test: nc 127.0.0.1 10000 -z
+      interval: 1s
+      retries: 30
+    ports:
+      - 10000:10000
+    command: "azurite-blob --blobHost 0.0.0.0"
+  azurite_init:
+    image: mcr.microsoft.com/azure-cli:latest
+    command: /bin/sh -c "az storage container create --name screens &&
+                         az storage container create --name files"
+    depends_on:
+      azurite:
+        condition: service_healthy
+    environment:
+      AZURE_STORAGE_CONNECTION_STRING: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"
+  func:
+    build:
+      context: ./src/
+    command: /bin/bash -c "/code/scripts/venv.sh &&
+                           /code/scripts/run.sh"
+    environment:
+      PORT: 7071
+      AzureWebJobsStorage: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"
+      AzureWebJobsFeatureFlags: "EnableWorkerIndexing"
+      FUNCTIONS_WORKER_RUNTIME: "python"
+      STORAGE_CONTAINER_SCREENS_NAME: "screens"
+      STORAGE_CONTAINER_FILES_NAME: "files"
+    env_file:
+      - .env
+    depends_on:
+      azurite_init:
+         condition: service_completed_successfully
+    links:
+      - azurite
+    ports:
+      - 7071:7071
+    volumes:
+      - ./src:/code
+  func-bash:
+    build:
+      context: ./src/
+    command: /bin/bash -c "/code/scripts/venv.sh &&
+                           /bin/bash"
+    environment:
+      PORT: 7071
+      AzureWebJobsStorage: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"
+      AzureWebJobsFeatureFlags: "EnableWorkerIndexing"
+      FUNCTIONS_WORKER_RUNTIME: "python"
+      STORAGE_CONTAINER_SCREENS_NAME: "screens"
+      STORAGE_CONTAINER_FILES_NAME: "files"
+    env_file:
+      - .env
+    depends_on:
+      azurite_init:
+        condition: service_completed_successfully
+    links:
+      - azurite
+    ports:
+      - 7071:7071
+    volumes:
+      - ./src:/code

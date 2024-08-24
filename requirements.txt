@@ -1,0 +1,5 @@
+httpie
+ipdb
+ipython
+pre-commit
+pre-commit-hooks==4.6.0

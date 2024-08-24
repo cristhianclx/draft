@@ -1,0 +1,14 @@
+-f https://download.pytorch.org/whl/torch_stable.html
+azure-functions==1.20.0
+azure-storage-blob==12.22.0
+Flask==3.0.3
+Flask-Cors==4.0.1
+Flask-Migrate==4.0.7
+Flask-RESTful==0.3.10
+langchain-openai==0.1.22
+pydantic==2.8.2
+PyMySQL==1.1.1
+requests==2.31.0
+sentence-transformers==3.0.1
+tidb-vector==0.0.11
+torch==2.3.1+cpu

@@ -1,0 +1,55 @@
+default_language_version:
+  python: python3
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+    - id: check-json
+      exclude: |
+        (?x)^(
+          venv/|
+          infrastructure/
+        )
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+    - id: check-yaml
+      exclude: ^venv/
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+    - id: debug-statements
+      exclude: ^venv/
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+    - id: end-of-file-fixer
+      exclude: ^venv/
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+    - id: requirements-txt-fixer
+      exclude: ^venv/
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+    - id: trailing-whitespace
+      exclude: ^venv/
+- repo: https://github.com/psf/black
+  rev: 24.8.0
+  hooks:
+    - id: black
+      args: [--line-length=120]
+      exclude: ^venv/
+- repo: https://github.com/PyCQA/autoflake
+  rev: v2.3.1
+  hooks:
+    - id: autoflake
+      args: [--in-place, --remove-unused-variables, --remove-all-unused-imports, -r]
+      exclude: ^venv/
+- repo: https://github.com/pycqa/isort
+  rev: 5.13.2
+  hooks:
+    - id: isort
+      args: [--profile=black]
+      exclude: ^venv/
